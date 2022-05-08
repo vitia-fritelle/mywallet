@@ -9,3 +9,5 @@ mongo.connect().then(() => {
         console.info(`Listening to port ${config.port}`);
     });
 });
+
+export default mongo;
