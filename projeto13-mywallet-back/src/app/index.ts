@@ -4,6 +4,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
+import routes from '../routes';
 
 const app = express();
 
@@ -13,9 +14,6 @@ app.use(urlencoded({ extended: true }));
 app.use(mongoSanitize());
 app.use(compression());
 app.use(cors());
-
-app.get('/home',(_,res) => {
-    res.status(201).send('Você chegou até aqui! Parabéns!')
-});
+app.use(routes)
 
 export default app;
