@@ -1,3 +1,5 @@
+import { hashSync } from "bcryptjs";
+
 export default class User {
 
     constructor(
@@ -5,6 +7,7 @@ export default class User {
         public email:string,
         public password:string
     ) {
+        this.password = hashSync(password);
     }
 }
 
