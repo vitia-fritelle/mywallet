@@ -6,8 +6,8 @@ const mongo = new MongoClient(config.mongodb_url);
 mongo.connect().then(() => {
 	console.info("Connected to MongoDB");
 	app.listen(config.port, () => {
-        console.info(`Listening to port ${config.port}`);
-    });
+		console.info(`Listening to port ${config.port}`);
+	});
 });
 
 export default mongo;
