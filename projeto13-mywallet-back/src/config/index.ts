@@ -3,7 +3,10 @@ import {join,dirname} from 'path';
 import { fileURLToPath } from 'url';
 import Joi from 'joi';
 
-dotenvConfig({ path: join(dirname(fileURLToPath(import.meta.url)), '../../.env') });
+dotenvConfig({ 
+    path: join(dirname(fileURLToPath(import.meta.url)), 
+    '../../.env') 
+});
 
 const envVarsSchema = (
     Joi

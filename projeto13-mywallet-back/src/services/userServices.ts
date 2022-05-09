@@ -4,10 +4,15 @@ import User from "../models/userModel";
 export const createUser = async (user:User) => {
 
     if (await existsEmail(user.email)) {
-        throw new Error;
+        throw new Error('Usuário já cadastrado');
     }
     const users = mongo.db('Bank').collection<User>('users');
-    return users.insertOne(user);
+    const resp = await users.insertOne(user);
+    if(!resp.acknowledged) {
+        throw new Error('Não foi possível inserir um usuário')
+    } else {
+        return 
+    }
 }
 
 export const getUser = async (email:string) => {
@@ -17,4 +22,7 @@ export const getUser = async (email:string) => {
     return user;
 }
 
-const existsEmail = async (email:string) => !!getUser(email);
+const existsEmail = async (email:string) => {
+    
+    return !!await getUser(email);
+};

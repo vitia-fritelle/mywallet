@@ -1,35 +1,35 @@
 import mongo from '..';
-import Token from '../models/tokenModel';
+import Session from '../models/sessionModel';
 
-export const verifyToken = async (userToken:string) => {
+export const verifyToken = async (token:string) => {
     
-    const tokens = mongo.db('Bank').collection<Token>('token');
-    const token = await tokens.findOne({token:userToken});
-    if (!token) {
-        throw new Error;
+    const sessions = mongo.db('Bank').collection<Session>('sessions');
+    const session = await sessions.findOne({token});
+    if (!session) {
+        throw new Error("Não se encontrou o token");
     } else {
-        return token;
+        return session;
     }
 }
 
-export const saveToken = async (userToken:Token) => {
+export const saveToken = async (session:Session) => {
 
-    const tokens = mongo.db('Bank').collection<Token>('token');
-    const token = await tokens.insertOne(userToken);
-    if (!token) {
-        throw new Error;
+    const sessions = mongo.db('Bank').collection<Session>('sessions');
+    const ssn = await sessions.insertOne(session);
+    if (!ssn.acknowledged) {
+        throw new Error("Não foi possível salvar o token");
     } else {
-        return token;
+        return ;
     }
 }
 
-export const deleteToken = async (userToken:string) => {
+export const deleteToken = async (token:string) => {
 
-    const tokens = mongo.db('Bank').collection<Token>('token');
-    const token = tokens.findOneAndDelete({token:userToken});
-    if (!token) {
-        throw new Error;
+    const sessions = mongo.db('Bank').collection<Session>('sessions');
+    const session = await sessions.findOneAndDelete({token});
+    if (!session.value) {
+        throw new Error("Não foi possível deletar o token");
     } else {
-        return token;
+        return ;
     }
 }
