@@ -27,7 +27,7 @@ export const login = catchAsync(async (req:Request,res:Response) => {
         Date.now()+expiringTime
     );
     await saveToken(session);
-    return res.status(200).json({token:session.token})
+    return res.status(200).json({name:user.name,token:session.token})
 });
 
 export const logout = catchAsync(async (req:Request,res:Response) => {

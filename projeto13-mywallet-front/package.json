@@ -2,22 +2,28 @@
   "name": "projeto13-mywallet-front",
   "version": "0.1.0",
   "private": true,
+  "author": "Vitor Junior <vitorjunior@poli.ufrj.br>",
+  "license": "UNLICENSED",
   "dependencies": {
     "axios": "^0.27.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-ionicons": "^4.2.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "styled-reset": "^4.3.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.31",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.3",
     "@types/styled-components": "^5.1.25",
+    "@typescript-eslint/parser": "^5.22.0",
     "eslint": "^8.15.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-prettier": "^4.0.0",
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
@@ -27,21 +33,29 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .tsx",
+    "lint:fix": "eslint . --fix --ext .tsx",
+    "prettier": "prettier --check **/*.tsx",
+    "prettier:fix": "prettier --write **/*.tsx"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "*.tsx"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
+    "rules": {
+      "import/no-anonymous-default-export": "off"
+    },
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+        "jsx": true
       }
+    },
+    "extends": [
+      "prettier",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "ignorePatterns": [
+      "node_modules/"
     ]
   },
   "browserslist": {
@@ -57,10 +71,10 @@
     ]
   },
   "prettier": {
-    "tabWidth": "4",
-    "useTabs": "true",
-    "semi": "true",
-    "bracketSpacing": "false",
-    "bracketSameLine": "true"
+    "tabWidth": 4,
+    "useTabs": true,
+    "semi": true,
+    "bracketSpacing": false,
+    "bracketSameLine": true
   }
 }
