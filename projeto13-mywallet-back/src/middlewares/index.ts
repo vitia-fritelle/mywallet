@@ -11,7 +11,7 @@ export const errorConverter = (
     let error = err;
     if (!(error instanceof ApiError)) {
         const statusCode = error.statusCode || 500;
-        const message = error.message || "Not especified"
+        const message = error.message || "Not especified";
         error = new ApiError(statusCode, message, err.stack);
     }
     next(error);
@@ -20,13 +20,11 @@ export const errorConverter = (
 export const errorHandler = (
     err: ApiError, 
     _req: Request, 
-    res: Response, 
-    _next: NextFunction) => {
+    res: Response) => {
 
-    let { statusCode, message } = err;
+    const { statusCode, message } = err;
     if (config.env === 'production') {
-        statusCode = 500;
-        message = "Internal Server Error";
+        res.sendStatus(500);
     } else {
         res.locals.errorMessage = err.message;
         const response = {
@@ -35,7 +33,7 @@ export const errorHandler = (
             ...(config.env === 'development' && { stack: err.stack }),
         };
         if (config.env === 'development') {
-            console.error(err);
+            console.error(response);
         }
         res.status(statusCode).send(response);
     }

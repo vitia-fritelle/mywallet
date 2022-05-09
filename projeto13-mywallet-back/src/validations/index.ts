@@ -1,8 +1,8 @@
 import Joi from "joi";
-import {CustomValidator} from "joi"
+import { CustomValidator } from "joi"
 import { ApiError } from "../utils";
 
-const validatePassword: CustomValidator<string> = (value, _helpers) => {
+const validatePassword: CustomValidator<string> = (value) => {
     
     if (value.length < 8) {
         throw new ApiError(
