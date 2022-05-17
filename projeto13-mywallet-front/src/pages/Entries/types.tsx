@@ -5,6 +5,6 @@ export type EntryPage = {
 export enum EntryTypes {
     NEWCREDIT,
     NEWDEBIT,
-    EDITENTRY,
-    DELETEENTRY
+    EDITCREDIT,
+    EDITDEBIT
 }

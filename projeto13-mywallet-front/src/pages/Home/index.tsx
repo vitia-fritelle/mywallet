@@ -1,44 +1,38 @@
 import { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ExitOutline, AddCircleOutline, RemoveCircleOutline  } from 'react-ionicons'
+import { ExitOutline, AddCircleOutline, RemoveCircleOutline, CloseOutline  } from 'react-ionicons'
 import Entry from '../../models'
 import entryAxios from '../../adapters';
 import UserContext from '../../contexts/UserContext'
 import { Container, HomeHeader, StyledBalance, StyledEntryButton, StyledList, StyledView } from './styles';
-
-const dateRegex = /^(\d{4})-(\d{2})-(\d{2})#(\d{2}):(\d{2}):(\d{2})$/;
+import { dateRegex, debitOrCredit, printPrice } from './utils';
 
 export default ({name}: {name:string}) => {
 
+    const [entries, setEntries] = useState<Array<Entry>>([]);
     const browse = useNavigate();
+    
+    const getTotal = () => entries.reduce((acc,{value}) => {
+        return (acc+parseFloat(value));
+    },0);
+    
     const logout = () => {
         localStorage.removeItem('user');
         browse('/');
     };
-    const [entries, setEntries] = useState<Array<Entry>>([]);
-    const getTotal = () => entries.reduce((acc,{value}) => {
-        return (acc+parseFloat(value));
-    },0);
     let { token } = useContext(UserContext);
-
-    const debitOrCredit = (value:string) => {
-        return parseFloat(value) > 0 ? 'value credit': 'value debit';
-    };
-    const printPrice = (price:number) => {
-        return price.toFixed(2).replace('-','');
-    }
     useEffect(() => {
         const storedToken = localStorage.getItem('user');
         if (!token && storedToken) {
             token = storedToken;
         }
     },[]);
-    useEffect(() => {
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        };
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    };
+    const getEntries = () => {
         entryAxios.get('/entry', config).then(({data}) => {
             setEntries(data.map((element: Entry) => { 
                 const {description, value, date, _id} = element;
@@ -47,7 +41,14 @@ export default ({name}: {name:string}) => {
         }).catch(() => {
             alert('Algo deu errado!');
         })
-    },[]);
+    }
+    useEffect(getEntries,[]);
+    const deleteEntry = (_id:string) => {
+        const answer = window.confirm('Você tem certeza que quer deletar ?');
+        if (answer) {
+            entryAxios.delete(`/entry/${_id}`,config).then(getEntries);
+        }
+    }
     return (
         <Container>
             <HomeHeader>
@@ -73,17 +74,28 @@ export default ({name}: {name:string}) => {
                                     match?`${match[3]}/${match[2]}`:''
                                 );
                                 const price = parseFloat(value);
+                                const goTo = parseFloat(value) < 0 ? '/editdebit' : '/editcredit';
                                 return (
-                                    <li className='entries' key={_id}>
+                                    <li 
+                                        key={_id} >
                                         <span className='date'>
                                             {dateDisplay}
                                         </span> 
-                                        <span className='description'>
+                                        <span 
+                                            className='description'
+                                            onClick={() => browse(
+                                                goTo,
+                                                {state:{_id,description,value}})}>
                                             {description}
                                         </span>
                                         <span className={debitOrCredit(value)}>
                                             {printPrice(price)}
-                                        </span> 
+                                        </span>
+                                        <CloseOutline
+                                            cssClasses={'delete-icon'}
+                                            height="25px"
+                                            width="25px"
+                                            onClick={() => deleteEntry(_id)}/>
                                     </li>
                                 );
                             })

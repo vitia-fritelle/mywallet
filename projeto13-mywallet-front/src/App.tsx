@@ -43,11 +43,11 @@ export default () => {
 							path="/newdebit" 
 							element={<Entries type={EntryTypes.NEWDEBIT}/>} />
 						<Route 
-							path="/editentry" 
-							element={<Entries type={EntryTypes.EDITENTRY}/>} />
+							path="/editcredit" 
+							element={<Entries type={EntryTypes.EDITCREDIT}/>} />
 						<Route 
-							path="/deletentry" 
-							element={<Entries type={EntryTypes.DELETEENTRY}/>} />
+							path="/editdebit" 
+							element={<Entries type={EntryTypes.EDITDEBIT}/>} />
 					</Routes>
 				</BrowserRouter>
 			</UserContext.Provider>

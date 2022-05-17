@@ -1,15 +1,22 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { StyledHeader, StyledInput, StyledSubmitButton } from "../../components";
-import { EntryPage } from "./types";
+import { useLocation, useNavigate } from "react-router-dom";
+import { StyledHeader, StyledInput, StyledSubmitButton } from "../../styles";
+import { EntryPage, EntryTypes } from "./types";
 import entryAxios from '../../adapters';
 import UserContext from "../../contexts/UserContext";
+import { ReturnUpBackOutline } from "react-ionicons";
+import { Container } from "./styles";
+import Entry from "../../models";
 
 export default (props:EntryPage) => {
     
-    const [value,setValue] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
+    const location = useLocation();
+    const [value,setValue] = useState<string>(
+        (location.state as Entry).value.replace('-','')
+    );
+    const [description, setDescription] = useState<string>(
+        (location.state as Entry).description
+    );
     const browse = useNavigate();
     const {token} = useContext(UserContext);
     const config = {
@@ -17,50 +24,38 @@ export default (props:EntryPage) => {
             Authorization: `Bearer ${token}`
         }
     };
-    const saveCredit = (e:React.FormEvent<HTMLFormElement>) => {
+    const saveEntry = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        entryAxios.post('/entry',{value,description},config).then(() => {
-            browse('/home');
-        }).catch(() => {
-            alert('Algo deu errado!');
-        });
-    };
-    const saveDebit = (e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const debit = '-'+value;
-        entryAxios.post('/entry',{value: debit,description},config).then(() => {
-            browse('/home');
-        }).catch(() => {
-            alert('Algo deu errado!');
-        });
+        const entry = props.type === EntryTypes.NEWDEBIT?'-'+value:value;
+        entryAxios
+        .post(
+            '/entry',
+            {value: entry,description},config
+        )
+        .then(() => browse('/home'))
+        .catch(() => alert('Algo deu errado!'));
     };
     const updateEntry = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        entryAxios.put('/entry',{value,description},config).then(() => {
-            browse('/home');
-        }).catch(() => {
-            alert('Algo deu errado!');
-        });
+        const entry = props.type === EntryTypes.EDITDEBIT?'-'+value:value;
+        entryAxios
+        .put(
+            `/entry/${(location.state as Entry)._id}`,
+            {value: entry,description},config
+        )
+        .then(() => browse('/home'))
+        .catch(() => alert('Algo deu errado!'));
     };
-    const deleteEntry = (e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        entryAxios.delete('/entry',config).then(() => {
-            browse('/home');
-        }).catch(() => {
-            alert('Algo deu errado!');
-        });
-    };
-
     const entries = [
         {
             header:"Nova entrada",
             button:"Salvar entrada",
-            action:saveCredit
+            action:saveEntry
         },
         {
             header:"Nova saída",
             button:"Salvar saída",
-            action:saveDebit
+            action:saveEntry
         },
         {
             header:"Editar entrada",
@@ -70,25 +65,33 @@ export default (props:EntryPage) => {
         {
             header:"Editar saída",
             button:"Atualizar saída",
-            action:deleteEntry
+            action:updateEntry
         }
     ]; 
     return (
         <Container>
-            <StyledHeader>{entries[props.type].header}</StyledHeader>
+            <StyledHeader>
+                {entries[props.type].header}
+                <ReturnUpBackOutline
+                    color={'#00000'} 
+                    height="25px"
+                    width="25px"
+                    style={{cursor:'pointer'}}
+                    onClick={() => browse(-1)}/>
+            </StyledHeader>
             <form onSubmit={entries[props.type].action}>
                 <StyledInput
                     required
                     type="text"
                     value={value} 
                     placeholder="Valor" 
-                    onChange={e => setValue(e.target.value)}/>
+                    onChange={(e) => setValue(e.target.value)}/>
                 <StyledInput
                     required
                     type="text"
                     value={description} 
                     placeholder="Descrição" 
-                    onChange={e => setDescription(e.target.value)}/>    
+                    onChange={(e) => setDescription(e.target.value)}/>    
                 <StyledSubmitButton type="submit">
                     {entries[props.type].button}
                 </StyledSubmitButton>
@@ -97,10 +100,3 @@ export default (props:EntryPage) => {
     );
 };
 
-const Container = styled.div`
-    header {
-        margin-bottom: 40px;
-        margin-top: 25px;
-    }
-
-`

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { StyledHeader } from '../../components'
+import { StyledHeader } from '../Entries/styles';
 
 export const StyledBalance = styled.div`
 
@@ -20,7 +20,6 @@ export const StyledList = styled.ul`
 
     display: flex;
     gap: 20px;
-    color: #000000;
     overflow-y: scroll;
     height: 100%;
     height: 100%;
@@ -44,6 +43,7 @@ export const StyledList = styled.ul`
             font-size: 16px;
             line-height: 19px;
             color: #000000;
+            cursor: pointer;
         }
         .value {
             font-family: 'Raleway';
@@ -52,6 +52,12 @@ export const StyledList = styled.ul`
             font-size: 16px;
             line-height: 19px;
             text-align: right;
+        }
+        .delete-icon {
+            cursor: pointer;
+            & > * {
+                color: #000000;
+            }
         }
     }
 `;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import authAxios from "../../adapters";
-import { StyledInput, StyledSubmitButton } from "../../components";
+import { StyledInput, StyledSubmitButton } from "../../styles";
 import { AuthPage, AuthTypes } from "./types";
 
 export default (props: AuthPage) => {
