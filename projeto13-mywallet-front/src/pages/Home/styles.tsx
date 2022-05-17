@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { StyledHeader } from '../Entries/styles';
+import { StyledHeader } from '../../styles';
 
 export const StyledBalance = styled.div`
 
