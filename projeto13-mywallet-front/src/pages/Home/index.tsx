@@ -1,14 +1,53 @@
-import { ExitOutline } from 'react-ionicons'
-import { AddCircleOutline } from 'react-ionicons'
-import { RemoveCircleOutline } from 'react-ionicons'
+import { useEffect, useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
-import { StyledHeader } from '../../components'
+import { ExitOutline, AddCircleOutline, RemoveCircleOutline  } from 'react-ionicons'
+import Entry from '../../models'
+import entryAxios from '../../adapters';
+import UserContext from '../../contexts/UserContext'
+import { Container, HomeHeader, StyledBalance, StyledEntryButton, StyledList, StyledView } from './styles';
+
+const dateRegex = /^(\d{4})-(\d{2})-(\d{2})#(\d{2}):(\d{2}):(\d{2})$/;
 
 export default ({name}: {name:string}) => {
 
     const browse = useNavigate();
+    const logout = () => {
+        localStorage.removeItem('user');
+        browse('/');
+    };
+    const [entries, setEntries] = useState<Array<Entry>>([]);
+    const getTotal = () => entries.reduce((acc,{value}) => {
+        return (acc+parseFloat(value));
+    },0);
+    let { token } = useContext(UserContext);
 
+    const debitOrCredit = (value:string) => {
+        return parseFloat(value) > 0 ? 'value credit': 'value debit';
+    };
+    const printPrice = (price:number) => {
+        return price.toFixed(2).replace('-','');
+    }
+    useEffect(() => {
+        const storedToken = localStorage.getItem('user');
+        if (!token && storedToken) {
+            token = storedToken;
+        }
+    },[]);
+    useEffect(() => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        entryAxios.get('/entry', config).then(({data}) => {
+            setEntries(data.map((element: Entry) => { 
+                const {description, value, date, _id} = element;
+                return new Entry(description, value, date, _id);
+            }))
+        }).catch(() => {
+            alert('Algo deu errado!');
+        })
+    },[]);
     return (
         <Container>
             <HomeHeader>
@@ -17,12 +56,49 @@ export default ({name}: {name:string}) => {
                     color={'#00000'} 
                     height="25px"
                     width="25px"
+                    onClick={logout}
+                    style={{cursor:'pointer'}}
                 />
             </HomeHeader>
-            <div className="view">
-                <div className="entries"></div>
-                <div className="balance"></div>
-            </div>
+            <StyledView>
+                {
+                    entries.length !== 0 
+                    ?
+                    <>
+                        <StyledList>
+                        {
+                            entries.map(({value,description,date,_id}) => {
+                                const match = date.match(dateRegex);
+                                const dateDisplay = (
+                                    match?`${match[3]}/${match[2]}`:''
+                                );
+                                const price = parseFloat(value);
+                                return (
+                                    <li className='entries' key={_id}>
+                                        <span className='date'>
+                                            {dateDisplay}
+                                        </span> 
+                                        <span className='description'>
+                                            {description}
+                                        </span>
+                                        <span className={debitOrCredit(value)}>
+                                            {printPrice(price)}
+                                        </span> 
+                                    </li>
+                                );
+                            })
+                        }
+                        </StyledList>
+                        <StyledBalance>
+                            SALDO 
+                            <span className={debitOrCredit(getTotal().toString())}>
+                                {getTotal().toFixed(2)}
+                            </span>
+                        </StyledBalance>
+                    </> 
+                    :<p>Não há registros de entrada ou saída</p>
+                }
+            </StyledView>
             <ul>
                 <li>
                     <StyledEntryButton onClick={() => browse('/newcredit')}>
@@ -47,50 +123,4 @@ export default ({name}: {name:string}) => {
             </ul>
         </Container>
     );
-}
-
-const StyledEntryButton = styled.button`
-
-    border: none;
-    width: 155px;
-    height: 114px;
-    background: #A328D6;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: space-between;
-    align-items:flex-start;
-    font-weight: 700;
-    font-size: 17px;
-    line-height: 20px;
-    padding: 9px;
-`;
-
-const HomeHeader = styled(StyledHeader)`
-
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 0;
-`;
-
-const Container = styled.div`
-
-    ul {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-between;
-        align-items: center;
-    }
-    @media (max-width: 360px) {
-        ul {
-            justify-content: center;
-        }
-        
-        ul > li {
-            margin-bottom: 10px;
-        }
-    }
-`;
+};

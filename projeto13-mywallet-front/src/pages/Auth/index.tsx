@@ -62,7 +62,7 @@ export default (props: AuthPage) => {
             props.setToken(data.token);
             browse('/home');
         }
-    },[user]);
+    },[]);
 
     const isLoginPage = () => props.type === AuthTypes.LOGIN;
 

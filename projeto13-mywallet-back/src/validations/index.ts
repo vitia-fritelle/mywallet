@@ -1,18 +1,16 @@
-import Joi from "joi";
-import { CustomValidator } from "joi"
-import { ApiError } from "../utils";
+import Joi, { CustomValidator } from 'joi';
+import { ApiError } from '../utils';
 
 const validatePassword: CustomValidator<string> = (value) => {
-    
     if (value.length < 8) {
         throw new ApiError(
             422,
-            'Password must be at least 8 characters'
+            'Password must be at least 8 characters',
         );
-    } else if(!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
+    } else if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
         throw new ApiError(
             422,
-            'Password must contain at least 1 letter and 1 number'
+            'Password must contain at least 1 letter and 1 number',
         );
     } else {
         return value;
@@ -27,5 +25,5 @@ export const registerSchema = Joi.object({
 
 export const createEntrySchema = Joi.object({
     description: Joi.string().required(),
-    value: Joi.number().required()
+    value: Joi.string().required(),
 });

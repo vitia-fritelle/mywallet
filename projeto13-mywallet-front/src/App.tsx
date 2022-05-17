@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UserContext from "./contexts/UserContext";
 import Entries from "./pages/Entries";
 import Auth from "./pages/Auth";
@@ -33,11 +33,21 @@ export default () => {
 							path="/register"
 							element={<Auth type={AuthTypes.REGISTER} />}
 						/>
-						<Route path="/home" element={<Home name={name}/>} />
-						<Route path="/newcredit" element={<Entries type={EntryTypes.NEWCREDIT}/>} />
-						<Route path="/newdebit" element={<Entries type={EntryTypes.NEWDEBIT}/>} />
-						<Route path="/editentry" element={<Entries type={EntryTypes.EDITENTRY}/>} />
-						<Route path="/deletentry" element={<Entries type={EntryTypes.DELETEENTRY}/>} />
+						<Route 
+							path="/home" 
+							element={<Home name={name}/>} />
+						<Route 
+							path="/newcredit" 
+							element={<Entries type={EntryTypes.NEWCREDIT}/>} />
+						<Route 
+							path="/newdebit" 
+							element={<Entries type={EntryTypes.NEWDEBIT}/>} />
+						<Route 
+							path="/editentry" 
+							element={<Entries type={EntryTypes.EDITENTRY}/>} />
+						<Route 
+							path="/deletentry" 
+							element={<Entries type={EntryTypes.DELETEENTRY}/>} />
 					</Routes>
 				</BrowserRouter>
 			</UserContext.Provider>

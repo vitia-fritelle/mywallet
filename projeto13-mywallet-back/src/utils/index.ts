@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export const catchAsync = (
     (fn: (req:Request, res:Response, next:NextFunction) => any) => (
-        req: Request, 
-        res: Response, 
-        next: NextFunction
+        req: Request,
+        res: Response,
+        next: NextFunction,
     ) => {
         Promise.resolve(fn(req, res, next)).catch((err: Error) => next(err));
     }
@@ -12,9 +12,10 @@ export const catchAsync = (
 
 export class ApiError extends Error {
     constructor(
-        public statusCode: number, 
-        public message:string, 
-        public stack = 'Error') {
+        public statusCode: number,
+        public message:string,
+        public stack = 'Error',
+    ) {
         super(message);
         if (!stack) {
             Error.captureStackTrace(this, this.constructor);
