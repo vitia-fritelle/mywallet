@@ -12,10 +12,10 @@ export default (props:EntryPage) => {
     
     const location = useLocation();
     const [value,setValue] = useState<string>(
-        (location.state as Entry).value.replace('-','')
+        (location.state as Entry)?.value.replace('-','')
     );
     const [description, setDescription] = useState<string>(
-        (location.state as Entry).description
+        (location.state as Entry)?.description
     );
     const browse = useNavigate();
     const {token} = useContext(UserContext);
@@ -40,7 +40,7 @@ export default (props:EntryPage) => {
         const entry = props.type === EntryTypes.EDITDEBIT?'-'+value:value;
         entryAxios
         .put(
-            `/entry/${(location.state as Entry)._id}`,
+            `/entry/${(location.state as Entry)?._id}`,
             {value: entry,description},config
         )
         .then(() => browse('/home'))
