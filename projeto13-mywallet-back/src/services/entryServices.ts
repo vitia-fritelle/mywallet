@@ -15,10 +15,8 @@ export const getUserId = async (token:string) => {
 };
 
 export const createEntry = async (entry:Entry) => {
-    console.log('entrei em criar usuário');
     const entries = mongo.db('Bank').collection<Entry>('entries');
     const resp = await entries.insertOne(entry);
-    console.log('criei na tabela')
     if (!resp.acknowledged) {
         throw new ApiError(500, 'Não foi possível criar o lançamento');
     } 

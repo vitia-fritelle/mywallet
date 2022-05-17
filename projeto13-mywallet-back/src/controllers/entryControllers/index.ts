@@ -11,7 +11,6 @@ import {
 import Entry from '../../models/entryModel';
 
 export const createEntry = catchAsync(async (req:Request, res:Response) => {
-    console.log('como assim?')
     const token = (
         req
             .headers
@@ -20,10 +19,8 @@ export const createEntry = catchAsync(async (req:Request, res:Response) => {
             .trim()
     );
     if (token) {
-        console.log('autenticado')
         const { description, value } = req.body;
         const userId = await getUserId(token);
-        console.log('peguei o userId')
         await create(
             new Entry(description, value, userId),
         );
